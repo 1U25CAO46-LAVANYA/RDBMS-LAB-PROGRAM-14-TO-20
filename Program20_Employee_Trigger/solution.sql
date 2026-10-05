@@ -1,38 +1,41 @@
-USE CollegeDB;
+CREATE TABLE Employee_Log (
 
-CREATE TABLE IF NOT EXISTS Employee (
-    EmployeeID INT PRIMARY KEY,
-    EmployeeName VARCHAR(50) NOT NULL,
-    Department VARCHAR(50)
+LogID INT AUTO_INCREMENT PRIMARY KEY,
+
+EmployeeID INT,
+
+Message VARCHAR(200),
+
+LogDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
 );
 
-CREATE TABLE IF NOT EXISTS Employee_Log (
-    LogID INT AUTO_INCREMENT PRIMARY KEY,
-    EmployeeID INT,
-    Message VARCHAR(255),
-    LogTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+DELIMITER //
 
-DROP TRIGGER IF EXISTS AfterEmployeeInsert;
+CREATE TRIGGER After_Employee_Insert
 
-DELIMITER $$
-
-CREATE TRIGGER AfterEmployeeInsert
 AFTER INSERT ON Employee
+
 FOR EACH ROW
+
 BEGIN
 
-    -- Insert an automatic message into Employee_Log
+INSERT INTO Employee_Log(EmployeeID, Message)
 
-END $$
+VALUES (
+
+NEW.EmployeeID,
+
+'New employee inserted successfully'
+
+);
+
+END //
 
 DELIMITER ;
 
--- Test the trigger
-
 INSERT INTO Employee
-VALUES (1, 'Arun', 'Computer Science');
 
-SELECT * FROM Employee;
+VALUES (2, 'Priya', 35000);
 
 SELECT * FROM Employee_Log;
